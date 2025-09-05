@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h2>Rooms</h2>
+  <form method="post" action="/rooms/add" style="display:flex;gap:8px">
+    <input name="name" placeholder="Room name (e.g. Room 1)" required>
+    <button type="submit">Add Room</button>
+  </form>
+
+  <ul>
+  {% for r in rooms %}
+    <li>
+      <a href="/room/{{r.id}}">{{ r.name }}</a>
+      <form method="post" action="/beds/add" style="display:inline-block;margin-left:8px">
+         <input type="hidden" name="room_id" value="{{r.id}}">
+         <input name="bed_number" placeholder="bed#" style="width:60px">
+         <button type="submit">Add Bed</button>
+      </form>
+    </li>
+  {% endfor %}
+  </ul>
+</section>
+
+<section>
+  <h2>People</h2>
+  <a href="/person/add">Add Person</a>
+  <ul>
+  {% for p in people %}
+    <li><a href="/person/{{p.id}}">{{ p.name }} — {{ p.id }}</a></li>
+  {% endfor %}
+  </ul>
+</section>
+{% endblock %}
