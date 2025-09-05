@@ -58,12 +58,18 @@ def person_add(name: str = Form(...), id_proof: str = Form(""), room_id: int = F
 def view_room(request: Request, room_id: int):
     with Session(engine) as session:
         room = session.exec(
-            select(Room).where(Room.id == room_id).options(selectinload(Room.beds))
+            select(Room)
+            .where(Room.id == room_id)
+            .options(
+                selectinload(Room.beds).selectinload(Bed.person)  # <-- load persons too
+            )
         ).first()
         if not room:
             return HTMLResponse(f"Room {room_id} not found", status_code=404)
+        # (optional) touch relationships to ensure they’re loaded before session closes
+        for b in room.beds:
+            _ = b.person
     return templates.TemplateResponse("room.html", {"request": request, "room": room})
-
 @app.post("/room/{room_id}/eb/upload")
 def upload_eb(room_id: int, month: str = Form(...), total_amount: float = Form(...), split_evenly: str = Form("yes")):
     split = (split_evenly.lower() in ["yes", "true", "1"])
