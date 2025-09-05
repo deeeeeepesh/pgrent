@@ -4,6 +4,8 @@ from .models import Room, Bed, Person, Payment, ElectricityBill
 from datetime import datetime
 from typing import Optional
 from sqlmodel import create_engine
+from sqlmodel import SQLModel
+
 
 def get_engine(db_path: str = "sqlite:///./pgrent.db"):
     return create_engine(db_path, connect_args={"check_same_thread": False})
