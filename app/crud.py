@@ -26,15 +26,26 @@ def add_room(session: Session, name: str):
     return room
 
 def add_bed(session: Session, room_id:int, bed_number:int):
-    bed = Bed(room_id=room_id, bed_number=bed_number, vacant=False)
+    bed = Bed(room_id=room_id, bed_number=bed_number, vacant=True)
     session.add(bed); session.commit(); session.refresh(bed)
     return bed
 
 # person
 def add_person(session: Session, name, id_proof, room_id, bed_id, base_rent):
+    # mark bed as occupied
+    bed = session.get(Bed, bed_id)
+    if not bed:
+        raise ValueError("Invalid bed_id")
+    if not bed.vacant:
+        raise ValueError("Bed is already occupied")
+    bed.vacant = False
+    
     p = Person(name=name, id_proof=id_proof, room_id=room_id, bed_id=bed_id, base_rent=base_rent)
-    session.add(p); session.commit(); session.refresh(p)
+    session.add(p)
+    session.commit()
+    session.refresh(p)
     return p
+
 
 def get_person(session: Session, person_id:int):
     return session.get(Person, person_id)
