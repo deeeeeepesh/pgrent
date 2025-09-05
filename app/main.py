@@ -7,8 +7,7 @@ import os
 from datetime import datetime
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
-
-from .models import Room, Payment, SQLModel, create_engine
+from .models import Room, Payment, SQLModel, create_engine, Bed
 from .crud import (
     get_engine, create_db_and_tables, get_rooms, add_room,
     add_bed, add_person, list_people, get_person,
