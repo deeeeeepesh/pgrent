@@ -29,6 +29,19 @@ def index(request: Request):
         rooms = get_rooms(session)
         people = list_people(session)
     return templates.TemplateResponse("index.html", {"request": request, "rooms": rooms, "people": people})
+@app.get("/api/room/{room_id}/beds")
+def api_room_beds(room_id: int):
+    with Session(engine) as session:
+        room = session.exec(
+            select(Room)
+            .where(Room.id == room_id)
+            .options(selectinload(Room.beds))
+        ).first()
+        if not room:
+            return JSONResponse({"error": "Room not found"}, status_code=404)
+        # only return vacant beds
+        beds = [{"id": b.id, "number": b.bed_number} for b in room.beds if b.vacant]
+    return beds
 
 @app.post("/rooms/add")
 def rooms_add(name: str = Form(...)):
