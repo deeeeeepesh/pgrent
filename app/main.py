@@ -5,6 +5,8 @@ from fastapi.templating import Jinja2Templates
 from sqlmodel import Session
 import os
 from datetime import datetime
+from sqlalchemy.orm import selectinload
+from sqlmodel import select
 
 from .models import Room, Payment, SQLModel, create_engine
 from .crud import (
@@ -56,7 +58,11 @@ def person_add(name: str = Form(...), id_proof: str = Form(""), room_id: int = F
 @app.get("/room/{room_id}", response_class=HTMLResponse)
 def view_room(request: Request, room_id: int):
     with Session(engine) as session:
-        room = session.get(Room, room_id)
+        room = session.exec(
+            select(Room).where(Room.id == room_id).options(selectinload(Room.beds))
+        ).first()
+        if not room:
+            return HTMLResponse(f"Room {room_id} not found", status_code=404)
     return templates.TemplateResponse("room.html", {"request": request, "room": room})
 
 @app.post("/room/{room_id}/eb/upload")
