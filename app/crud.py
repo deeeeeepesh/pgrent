@@ -24,7 +24,10 @@ def add_bed(session: Session, room_id:int, bed_number:int):
     bed = Bed(room_id=room_id, bed_number=bed_number, vacant=True)  # <-- was False
     session.add(bed); session.commit(); session.refresh(bed)
     return bed
-# person
+def add_room(session: Session, name: str):
+    room = Room(name=name)
+    session.add(room); session.commit(); session.refresh(room)
+    return room
 def add_person(session: Session, name, id_proof, room_id, bed_id, base_rent):
     bed = session.get(Bed, bed_id)
     if not bed:
