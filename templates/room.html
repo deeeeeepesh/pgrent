@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ room.name }}</h2>
+
+<h3>Beds</h3>
+<ul>
+{% for b in room.beds %}
+  <li>Bed {{b.bed_number}} — {% if b.vacant %}Vacant{% else %}Occupied{% endif %}
+      {% if b.person %} — {{ b.person.name }} {% endif %}
+  </li>
+{% endfor %}
+</ul>
+
+<h3>Upload Electricity Bill</h3>
+<form method="post" action="/room/{{room.id}}/eb/upload">
+  <input name="month" placeholder="YYYY-MM (eg 2025-06)" required><br>
+  <input name="total_amount" placeholder="Total EB amount" type="number" step="0.01" required><br>
+  <label><input type="radio" name="split_evenly" value="yes" checked> Split equally</label>
+  <label><input type="radio" name="split_evenly" value="no"> Assign whole to bed</label><br>
+  <button type="submit">Upload EB</button>
+</form>
+
+<a href="/">Back</a>
+{% endblock %}
